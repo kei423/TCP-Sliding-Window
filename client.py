@@ -5,7 +5,7 @@ HOST = "127.0.0.1" # localhost
 PORT = 56700
 NUM_PACKETS = 10000000 # 10 mil
 ADVERTISED_WINDOW = 2 ** 8
-MAX_SEQUENCE_NUMBER = 2 * ADVERTISED_WINDOW
+MAX_SEQUENCE_NUMBER = ADVERTISED_WINDOW ** 2
 DROP_CHANCE = 0.01
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -21,7 +21,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
                 print(f"Received: {data!r}")
             else:
-                dropped_sequence_numbers.append(current_sequence_numnber)
+                if current_sequence_numnber not in dropped_sequence_numbers:
+                    dropped_sequence_numbers.append(current_sequence_numnber)
 
             current_sequence_numnber += 1
             if current_sequence_numnber > MAX_SEQUENCE_NUMBER:
@@ -39,5 +40,3 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         
         for index in successfully_resent_sequence_number_indices[::-1]:
             dropped_sequence_numbers.pop(index)
-
-        break

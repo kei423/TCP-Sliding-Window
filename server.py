@@ -3,7 +3,7 @@ import socket
 HOST = "127.0.0.1" # localhost
 PORT = 56700
 ADVERTISED_WINDOW = 2 ** 8
-MAX_SEQUENCE_NUMBER = 2 * ADVERTISED_WINDOW
+MAX_SEQUENCE_NUMBER = ADVERTISED_WINDOW ** 2
 missing_seq_nums = []
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
