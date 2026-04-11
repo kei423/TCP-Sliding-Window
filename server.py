@@ -1,9 +1,9 @@
 import socket
 
-HOST = "127.0.0.1" # localhost
+HOST = "127.0.0.1" # change this to hotspot ip address
 PORT = 56700
-ADVERTISED_WINDOW = 2 ** 8
-MAX_SEQUENCE_NUMBER = ADVERTISED_WINDOW ** 2
+ADVERTISED_WINDOW = 1
+MAX_ADVERTISED_WINDOW = 2 ** 8
 missing_seq_nums = []
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
