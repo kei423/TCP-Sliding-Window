@@ -69,6 +69,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     seq_dropped_times = []
     seq_dropped_nums = []
 
+    # for tracking total packets sent
+    num_retransmissions = 0
+
+    # for table at the end of the doc
+    retransmission_counts = {}
+
     while packets_sent < NUM_PACKETS:
         
         # check for packets that got dropped and retransmit every 100 packets
@@ -76,6 +82,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             successfully_resent_indices = []
             # tries to retransmit with a 1% failure rate
             for index, seq_num in enumerate(dropped_sequence_numbers):
+                # increment the retransmission count
+                num_retransmissions += 1
+                retransmission_counts[seq_num] += 1
                 if send_packet(s, seq_num):
                     successfully_resent_indices.append(index)
                     if packets_sent % 1000 == 0:
@@ -120,6 +129,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             else:
                 if current_sequence_number not in dropped_sequence_numbers:
                     dropped_sequence_numbers.append(current_sequence_number)
+                # if seq num hasn't been dropped yet, set to 0
+                retransmission_counts.setdefault(current_sequence_number, 0)
                 # window size halves upon failure
                 window_threshold = max(1, window_size // 2)
                 window_size = window_threshold
@@ -142,3 +153,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     
     # plotting data stored once every 1000 packets sent
     plot_data(time_axis, sender_window_over_time_axis, seq_received_times, seq_received_nums, seq_dropped_times, seq_dropped_nums)
+    
+    # retransmission table
+    retransmission_tally = {}
+    for count in retransmission_counts.values():
+        retransmission_tally[count] = retransmission_tally.get(count, 0) + 1
+
+    for n in sorted(retransmission_tally):
+        print(f"{n} retransmissions: {retransmission_tally[n]} packets")
+    
+    print(f"Total packets sent: {packets_sent + num_retransmissions}")
