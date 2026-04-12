@@ -34,6 +34,14 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     packets_sent = 0
     packets_since_last_transmission = 0
 
+    # tracking data
+    time_axis = []
+    sender_window_over_time_axis = []
+    seq_received_times = []
+    seq_received_nums = []
+    seq_dropped_times = []
+    seq_dropped_nums = []
+
     while packets_sent < NUM_PACKETS:
         
         # check for packets that got dropped and retransmit every 100 packets
@@ -73,7 +81,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     # window size += 1
                     window_size = min(window_size + 1, MAX_ADVERTISED_WINDOW)
             else:
-                dropped_sequence_numbers.append(current_sequence_number)
+                if current_sequence_number not in dropped_sequence_numbers:
+                    dropped_sequence_numbers.append(current_sequence_number)
                 # window size halves upon failure
                 window_threshold = max(1, window_size // 2)
                 window_size = window_threshold
