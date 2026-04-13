@@ -87,6 +87,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 num_retransmissions += 1
                 retransmission_counts[seq_num] += 1
                 if send_packet(s, seq_num):
+                    # if retransmission is sucessful, mark to remove from list of
+                    # dropped packets
                     successfully_resent_indices.append(index)
                     if packets_sent % 1000 == 0:
                         seq_received_times.append(packets_sent)
@@ -102,7 +104,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         seq_dropped_times.append(packets_sent)
                         seq_dropped_nums.append(seq_num)
             
-            # 
+            # remove successfully re-transmitted packets from the list of dropped packets
             for index in successfully_resent_indices[::-1]:
                 dropped_sequence_numbers.pop(index)
             
@@ -110,12 +112,15 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         
         # send a window's worth of new packets
         for _ in range(window_size):
+            # for early termination
             if packets_sent >= NUM_PACKETS:
                 break
 
+            # sends packet
             delivery_successful = send_packet(s, current_sequence_number)
 
             if delivery_successful:
+                # if sucessful, update the window size accordingly
                 if packets_sent % 1000 == 0:
                     seq_received_times.append(packets_sent)
                     seq_received_nums.append(current_sequence_number)
@@ -129,6 +134,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     # window size += 1
                     window_size = min(window_size + 1, MAX_ADVERTISED_WINDOW)
             else:
+                # if failure
                 if current_sequence_number not in dropped_sequence_numbers:
                     dropped_sequence_numbers.append(current_sequence_number)
                 # if seq num hasn't been dropped yet, set to 0
@@ -147,9 +153,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 time_axis.append(packets_sent)
                 sender_window_over_time_axis.append(window_size)
 
+            # handles wraparound sequence number --> resets to 0 after
+            # reaching the max sequence number
             current_sequence_number += 1
             if current_sequence_number > MAX_SEQUENCE_NUMBER:
                 current_sequence_number = 0
+            
             packets_sent += 1
             packets_since_last_transmission += 1
     
