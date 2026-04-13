@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # HOST = "127.0.0.1" # localhost
 HOST = "172.20.10.4" # change this to hotspot ip address
 PORT = 56700
-NUM_PACKETS = 1 #1000000 # 1 mil
+NUM_PACKETS = 1000000 # 1 mil
 MAX_ADVERTISED_WINDOW = 2 ** 8
 MAX_SEQUENCE_NUMBER = MAX_ADVERTISED_WINDOW ** 2
 DROP_CHANCE = 0.01
@@ -62,7 +62,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     packets_sent = 0
     packets_since_last_transmission = 0
 
-    # tracking data
+    # tracking data for output graphs
     time_axis = []
     sender_window_over_time_axis = []
     seq_received_times = []
@@ -102,6 +102,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         seq_dropped_times.append(packets_sent)
                         seq_dropped_nums.append(seq_num)
             
+            # 
             for index in successfully_resent_indices[::-1]:
                 dropped_sequence_numbers.pop(index)
             
