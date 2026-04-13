@@ -1,7 +1,8 @@
 import socket
 import matplotlib.pyplot as plt
 
-HOST = "127.0.0.1" # localhost
+# HOST = "127.0.0.1" # localhost
+HOST = "172.20.10.4" # change this to hotspot ip address
 PORT = 56700
 ADVERTISED_WINDOW = 2 ** 8
 MAX_SEQUENCE_NUMBER = ADVERTISED_WINDOW ** 2
