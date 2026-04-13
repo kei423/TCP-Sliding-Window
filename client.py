@@ -48,6 +48,10 @@ def plot_data(time_axis, sender_window_over_time_axis, seq_received_times, seq_r
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
 
+    print(f"Connecting to IP Address {HOST} on Port {PORT}")
+    data = s.recv(1024)
+    print(data)
+
     current_sequence_number = 0
     dropped_sequence_numbers = []
 

@@ -40,6 +40,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         print(f"Sender IP Address: {address[0]}")
         receiver_ip, receiver_port = connection.getsockname()
         print(f'Receiver IP Address: {receiver_ip}')
+
+        connection.sendall(b"Connected established")
         while True:
             data = connection.recv(1024)
             if not data:
