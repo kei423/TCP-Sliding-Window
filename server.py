@@ -5,6 +5,7 @@ HOST = "127.0.0.1" # localhost
 PORT = 56700
 ADVERTISED_WINDOW = 2 ** 8
 MAX_SEQUENCE_NUMBER = ADVERTISED_WINDOW ** 2
+
 num_received_packets = 0
 received_packets = []
 throughput = []
@@ -18,7 +19,6 @@ def find_missing_seq(seq_num):
     global missing_total
 
     if not ((seq_num == prev_seq_num+1) or (prev_seq_num == MAX_SEQUENCE_NUMBER and seq_num == 0)):
-        #print(prev_seq_num, seq_num)
         for i in range(prev_seq_num+1, seq_num):
             missing_seq_nums.append(i)
             missing_total.append(i)
@@ -30,7 +30,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.listen()
     connection, address = s.accept()
     with connection:
-        print(f"Connected by {address}")
+        print(f"Sender IP Address: {address[0]}")
+        receiver_ip, receiver_port = connection.getsockname()
+        print(f'Receiver IP Address: {receiver_ip}')
         while True:
             data = connection.recv(1024)
             if not data:
