@@ -2,8 +2,8 @@ import socket
 import random
 import matplotlib.pyplot as plt
 
-HOST = "127.0.0.1" # localhost
-# HOST = "172.20.10.2" # change this to hotspot ip address
+# HOST = "127.0.0.1" # localhost
+HOST = "172.20.10.5" # change this to hotspot ip address
 PORT = 56700
 # NUM_PACKETS = 1000000 # 1 mil
 NUM_PACKETS = 500_000
